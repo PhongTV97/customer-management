@@ -1,21 +1,27 @@
-<script setup>
-const emit = defineEmits(['onClick'])
+<script setup lang="ts">
+type Props = {
+  classProp?: string
+  color?: string
+  variant?: string
+  size?: string
+}
 
-const props = defineProps({
-  classProp: String,
-  color: String,
-  variant: String,
-  size: String
+type Emits = {
+  (e: 'onClick'): void
+}
+
+const emit = defineEmits<Emits>()
+
+const props = withDefaults(defineProps<Props>(), {
+  variant: 'elevated',
+  classProp: 'font-weight-bold text-body-2',
+  color: 'primary'
 })
 
-const {
-  variant = 'elevated',
-  classProp = 'font-weight-bold text-body-2',
-  color = 'primary'
-} = props
+const { variant, color, classProp, size } = props
 
 /**
- * Xử lý sự kiện khi bấm vào button
+ * Handle click action to button
  */
 function onHandleClick() {
   emit('onClick')

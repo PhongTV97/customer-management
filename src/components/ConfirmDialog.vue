@@ -1,24 +1,28 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { LOCALE_KEY } from '@/constants'
 import Button from './Button.vue'
 
-const dialog = ref(false)
-const message = ref(null)
-const title = ref(null)
-const emit = defineEmits(['onAgree'])
+type Emits = {
+  (e: 'onAgree'): void
+}
+
+const emit = defineEmits<Emits>()
+const dialog = ref<boolean>(false)
+const message = ref<string>('')
+const title = ref<string>('')
 
 /**
- * Thực hiện open dialog và cho hiển thị title và message tương ứng
+ * Open an dialog and display the corresponding title and message
  */
-function onOpen(tle, msg) {
+function onOpen(tle: string, msg: string) {
   dialog.value = true
   title.value = tle
   message.value = msg
 }
 
 /**
- * Xử lý sự kiện khi bấm vào button OK và close dialog confirm
+ * Handle the event when clicking the OK button and closing the confirm dialog
  */
 function onAgree() {
   dialog.value = false
@@ -26,7 +30,7 @@ function onAgree() {
 }
 
 /**
- * Thực hiện close dialog khi bấm vào button cancel
+ * Close the dialog box when pressing the cancel button
  */
 function cancel() {
   dialog.value = false

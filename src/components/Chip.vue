@@ -1,9 +1,11 @@
-<script setup>
-const props = defineProps({
-  value: String,
-  numberChip: Number,
-  lengthItemChip: Number
-})
+<script setup lang="ts">
+type Props = {
+  value: string
+  numberChip: number
+  lengthItemChip: number
+}
+
+defineProps<Props>()
 </script>
 
 <template>

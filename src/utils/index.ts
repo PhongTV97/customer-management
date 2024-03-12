@@ -80,8 +80,9 @@ export const getHeaders = (t: any) => {
   ]
 }
 
-export const formatDataArray = (arr: any) => {
-  return arr.map((ele: any) => {
+export const formatDataArray = (arr: CustomerLst) => {
+  console.log(arr)
+  return arr.map((ele: Customer) => {
     return {
       ...ele,
       created_at: moment(ele.created_at).format(CONSTANT.DATE_FORMAT),
@@ -97,6 +98,8 @@ export const validateResponse = (response: any) => {
 }
 
 export const formatData = (body: any) => {
+  console.log(body)
+
   body.tags = !body.tags ? [] : body.tags.split(',')
 
   return body

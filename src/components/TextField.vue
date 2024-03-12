@@ -1,22 +1,24 @@
-<script setup>
+<script setup lang="ts">
 import { CONSTANT, LOCALE_KEY } from '@/constants'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 
-const textFieldRef = ref(null)
+type Props = {
+  label: string
+  counter?: number
+  hint?: string
+  required?: boolean
+}
+
+const props = defineProps<Props>()
+const textFieldRef = ref<any>(null)
 const { t } = useI18n()
 const valueModel = defineModel('value')
-const props = defineProps({
-  label: String,
-  counter: Number,
-  hint: String,
-  required: Boolean
-})
 
 /**
  * Checks if a value is provided when required and returns an error message if not.
  */
-function requiredFunc(value) {
+function requiredFunc(value: string | null): boolean | string {
   const valid = !props.required || value
 
   return valid ? true : t(LOCALE_KEY.USER_NAME_TOO_LONG_ERROR_MSG)
@@ -27,14 +29,14 @@ function requiredFunc(value) {
  * @param {string} value
  * @returns {boolean|string} Returns true if the length of the value is valid,otherwise returns a error message
  */
-function counterLength(value) {
+function counterLength(value: string | null): boolean | string {
   const isValid = !props.counter || !value || value.length <= CONSTANT.CUSTOMER_NAME_LENGTH
 
   return isValid ? true : t(LOCALE_KEY.USER_NAME_TOO_LONG_ERROR_MSG)
 }
 
 /**
- * Xử lý clear value of textfield
+ * Handle clear value of textfield
  */
 function onClearTextField() {
   valueModel.value = ''

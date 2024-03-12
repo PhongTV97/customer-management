@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import TextField from '@/components/TextField.vue'
 import Button from '@/components/Button.vue'
@@ -13,24 +13,26 @@ const useStore = useCustomerStore()
 const { hasError } = storeToRefs(useStore)
 const { updateCustomerAction, addCustomerAction } = useStore
 const { t } = useI18n()
-const visiableModal = ref(false)
-const arrayItems = ref([{}])
-const arrayItemsClone = ref([])
-const refConfirmDialog = ref(null)
-const refConfirmDialog2 = ref(null)
-const isEditForm = ref(false)
-const valid = ref(true)
-const form = ref(null)
-const emit = defineEmits(['onReloadTable'])
+const visiableModal = ref<boolean>(false)
+const arrayItems = ref<any>([{}])
+const arrayItemsClone = ref<any>([])
+const refConfirmDialog = ref<any>(null)
+const isEditForm = ref<boolean>(false)
+const valid = ref<boolean>(true)
+const form = ref<any>(null)
+type Emits = {
+  (e: 'onReloadTable'): void
+}
+const emit = defineEmits<Emits>()
 
 function onCancel() {
   visiableModal.value = false
 }
 
 /**
- * Xử lý open modal set data vào các field tương ứng
+ * Handle the open modal, sets data into the corresponding fields
  */
-function onOpen(item) {
+function onOpen(item: Customer) {
   // set data to form edit
   if (item) {
     arrayItems.value = [{}]
@@ -49,7 +51,7 @@ function onOpen(item) {
 }
 
 /**
- * check and disable button save
+ * Check and disable the save button
  */
 function disabledBtnSave() {
   if (isEditForm.value) {
@@ -60,8 +62,8 @@ function disabledBtnSave() {
     if (isNotChange) return true
   } else {
     if (
-      arrayItems.value.every(item => !item.customer_name) &&
-      arrayItems.value.every(item => !item.tags)
+      arrayItems.value.every((item: any) => !item.customer_name) &&
+      arrayItems.value.every((item: any) => !item.tags)
     ) {
       return true
     }
@@ -71,7 +73,7 @@ function disabledBtnSave() {
 }
 
 /**
- * open dialog confirm
+ * Open dialog confirm
  */
 async function onSave() {
   await form.value.validate()
@@ -85,27 +87,27 @@ async function onSave() {
 }
 
 /**
- * xử lý sự kiện bấm button Ok trên dialog confirm
+ * Handle the Ok button click event on the confirmation dialog
  */
 async function onAgree() {
   if (isEditForm.value) {
-    //call api update data
+    //Call api update data
     await updateCustomerAction(arrayItems.value)
   } else {
-    //filter all item have customer_name is not empty and call api add data
-    const arrAdd = arrayItems.value.filter(item => item.customer_name)
+    //Filter all item have customer_name is not empty and call api add data
+    const arrAdd = arrayItems.value.filter((item: any) => item.customer_name)
 
     await addCustomerAction(arrAdd)
   }
 
-  //kiểm tra lỗi và hiển thị message toast tương ứng
+  //Check for errors and display the corresponding toast message
   if (hasError.value) {
     showErrorMsg(t(LOCALE_KEY.MESSAGE_ERROR))
   } else {
     showSuccessMsg(t(LOCALE_KEY.MESSAGE_UPDATE_SUCCESS))
   }
 
-  //reload table to page 1
+  //Reload table to page 1
   emit('onReloadTable')
 
   visiableModal.value = false
@@ -121,7 +123,7 @@ function onAddItem() {
 /**
  * Remove item in form
  */
-function onRemoveItem(index) {
+function onRemoveItem(index: number) {
   if (arrayItems.value.length === 1) return
 
   arrayItems.value.splice(index, 1)
@@ -130,7 +132,7 @@ function onRemoveItem(index) {
 /**
  * Check required
  */
-function checkRequired(item) {
+function checkRequired(item: any): boolean {
   return !(!isEditForm.value && !item.tags)
 }
 
@@ -146,7 +148,7 @@ defineExpose({
         <v-icon>mdi-account-edit</v-icon>
         {{ $t(LOCALE_KEY[isEditForm ? 'TITLE_EDIT_CUSTOMER_MODAL' : 'TITLE_ADD_CUSTOMER_MODAL']) }}
       </v-card-title>
-      <v-card-text class="card-text" ref="refConfirmDialog2">
+      <v-card-text class="card-text">
         <v-form ref="form" v-model="valid">
           <v-row v-for="(item, index) in arrayItems" class="d-flex justify-center">
             <v-col cols="12" sm="5">
