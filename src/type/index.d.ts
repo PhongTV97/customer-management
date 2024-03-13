@@ -1,38 +1,41 @@
 type Customer = {
   customer_id: number
   customer_name: string
-  tags: string[]
+  tags: string
   created_at: string
   updated_at: string
   deleted_flg: boolean
 }
 
-type CustomerLst = Customer[]
+type CustomerList = Customer[]
 
-type ParamsRemove = number[]
+type IDRemove = number[]
 
-type ParamsGet = {
+type CustomerGet = {
   limit: number
   name: string
   page: number
   sortBy: string
-  tags: []
+  tags: string
 }
 
-type ItemAdd = {
-  customer_name: string
+type CustomerGetApi = {
+  limit: number
+  name: string
+  page: number
+  sortBy: string
   tags: string[]
 }
 
-type BodyAdd = ItemAdd[]
-
-type ItemUpdate = {
-  customer_id: string
+type CustomerForm = {
+  customer_id: number | null
   customer_name: string
-  tags: string[]
+  tags: string
 }
 
-type BodyUpdate = ItemUpdate[]
+type CustomerAdd = CustomerForm[]
+
+type CustomerFormArray = CustomerForm[]
 
 type SortBy = {
   key: string
@@ -44,8 +47,15 @@ type OptionTable = {
   sortBy: SortBy
 }
 
-type TableConfig = {
+type ConfigTable = {
   page: number
   itemsPerPage: number
   sortBy: SortBy[]
+}
+
+type SearchCondition = {
+  customerNameOrigin: string
+  tagsOrigin: string
+  customerName: string
+  tags: string
 }

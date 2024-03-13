@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { LOCALE_KEY } from '@/constants'
 </script>
 

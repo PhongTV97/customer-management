@@ -14,37 +14,43 @@ const { hasError } = storeToRefs(useStore)
 const { updateCustomerAction, addCustomerAction } = useStore
 const { t } = useI18n()
 const visiableModal = ref<boolean>(false)
-const arrayItems = ref<any>([{}])
-const arrayItemsClone = ref<any>([])
+const arrayItems = ref<CustomerFormArray>([])
+const arrayItemsClone = ref<CustomerFormArray>([])
 const refConfirmDialog = ref<any>(null)
 const isEditForm = ref<boolean>(false)
-const valid = ref<boolean>(true)
-const form = ref<any>(null)
+const isValid = ref<boolean>(true)
+const refForm = ref<any>(null)
 type Emits = {
   (e: 'onReloadTable'): void
 }
 const emit = defineEmits<Emits>()
 
+/**
+ * Handle close dialog modal
+ */
 const onCancel = () => {
   visiableModal.value = false
 }
 
 /**
- * Handle the open modal, sets data into the corresponding fields
+ * Handle the open dialog modal, sets data into the corresponding fields
  */
 const onOpen = (item: Customer) => {
-  // set data to form edit
+  arrayItems.value = [{ customer_id: null, customer_name: '', tags: '' }]
+
+  //Set data to form edit
   if (item) {
-    arrayItems.value = [{}]
-    arrayItems.value[0].customer_id = item.customer_id
-    arrayItems.value[0].customer_name = item.customer_name
-    arrayItems.value[0].tags = item.tags?.toString()
-    // create clone array to compare state change value in form
+    arrayItems.value[0] = {
+      ...arrayItems.value[0],
+      customer_id: item.customer_id,
+      customer_name: item.customer_name,
+      tags: item.tags
+    }
+    //Create clone array to compare state change value in form
     arrayItemsClone.value = JSON.parse(JSON.stringify(arrayItems.value))
     isEditForm.value = true
   } else {
     isEditForm.value = false
-    arrayItems.value = [{ customer_name: '', tags: '' }]
   }
 
   visiableModal.value = true
@@ -61,24 +67,21 @@ const disabledBtnSave = () => {
 
     if (isNotChange) return true
   } else {
-    if (
-      arrayItems.value.every((item: any) => !item.customer_name) &&
-      arrayItems.value.every((item: any) => !item.tags)
-    ) {
+    if (arrayItems.value.every((item: CustomerForm) => !item.customer_name && !item.tags)) {
       return true
     }
   }
 
-  return !valid.value
+  return !isValid.value
 }
 
 /**
  * Open dialog confirm
  */
 const onSave = async () => {
-  await form.value.validate()
+  await refForm.value.validate()
 
-  if (!valid.value) return
+  if (!isValid.value) return
 
   await refConfirmDialog.value.onOpen(
     t(LOCALE_KEY.TITLE_DIALOG_CONFIRM),
@@ -95,7 +98,7 @@ const onAgree = async () => {
     await updateCustomerAction(arrayItems.value)
   } else {
     //Filter all item have customer_name is not empty and call api add data
-    const arrAdd = arrayItems.value.filter((item: any) => item.customer_name)
+    const arrAdd = arrayItems.value.filter((item: CustomerForm) => item.customer_name)
 
     await addCustomerAction(arrAdd)
   }
@@ -105,19 +108,19 @@ const onAgree = async () => {
     showErrorMsg(t(LOCALE_KEY.MESSAGE_ERROR))
   } else {
     showSuccessMsg(t(LOCALE_KEY.MESSAGE_UPDATE_SUCCESS))
+
+    //Reload table to page 1
+    emit('onReloadTable')
+
+    visiableModal.value = false
   }
-
-  //Reload table to page 1
-  emit('onReloadTable')
-
-  visiableModal.value = false
 }
 
 /**
  * Add item to form
  */
 const onAddItem = () => {
-  arrayItems.value.push({ customer_name: '', tags: '' })
+  arrayItems.value.push({ customer_id: null, customer_name: '', tags: '' })
 }
 
 /**
@@ -149,7 +152,7 @@ defineExpose({
         {{ $t(LOCALE_KEY[isEditForm ? 'TITLE_EDIT_CUSTOMER_MODAL' : 'TITLE_ADD_CUSTOMER_MODAL']) }}
       </v-card-title>
       <v-card-text class="card-text">
-        <v-form ref="form" v-model="valid">
+        <v-form ref="refForm" v-model="isValid">
           <v-row v-for="(item, index) in arrayItems" class="d-flex justify-center">
             <v-col cols="12" sm="5">
               <TextField
@@ -167,7 +170,12 @@ defineExpose({
               />
             </v-col>
             <v-col v-if="!isEditForm" cols="12" sm="1">
-              <v-icon color="red" class="mt-2 cursor-pointer" @click="onRemoveItem(index)">
+              <v-icon
+                color="red"
+                class="mt-2 cursor-pointer"
+                @click="onRemoveItem(index)"
+                :class="{ disabled: arrayItems.length === 1 }"
+              >
                 mdi-minus-circle
               </v-icon>
             </v-col>
@@ -200,5 +208,9 @@ defineExpose({
 .card-text {
   max-height: 500px;
   overflow: auto;
+}
+
+.disabled {
+  opacity: 0.5;
 }
 </style>

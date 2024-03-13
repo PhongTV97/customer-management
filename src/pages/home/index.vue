@@ -9,14 +9,15 @@ import Loading from 'vue3-loading-overlay'
 import 'vue3-loading-overlay/dist/vue3-loading-overlay.css'
 import { showErrorMsg, getPageText, getHeaders, showSuccessMsg } from '@/utils'
 import UserModel from '@/components/UserModel.vue'
-import TextField from '@/components/TextField.vue'
 import Button from '@/components/Button.vue'
 import Chip from '@/components/Chip.vue'
+import SearchForm from '@/components/SearchForm.vue'
 
 const { t } = useI18n()
 const useStore = useCustomerStore()
 const { userList, totalElements, hasError, isLoading } = storeToRefs(useStore)
 const { getCustomersAction, removeCustomerAction } = useStore
+const headers = ref<any>(getHeaders(t))
 const itemSelected = ref<Customer | any>()
 const isRemoveMul = ref<boolean>(false)
 const itemsPerPage = ref<number>(15)
@@ -27,14 +28,17 @@ const options = ref<OptionTable>({
   page: 1,
   sortBy: { key: CONSTANT.CUSTOMER_ID_KEY, order: CONSTANT.ORDER }
 })
-const userName = ref<string>('')
-const tags = ref<string>('')
+const searchCondition = ref<SearchCondition>({
+  customerNameOrigin: '',
+  tagsOrigin: '',
+  customerName: '',
+  tags: ''
+})
 const pageText = ref<string>('')
-
 /**
  * Load data to table
  */
-const loadItems = async (params: TableConfig) => {
+const loadItems = async (params: ConfigTable) => {
   const { page, itemsPerPage, sortBy } = params
   //Save table state
   options.value.page = page
@@ -42,8 +46,8 @@ const loadItems = async (params: TableConfig) => {
 
   //Call api get customers list
   await getCustomersAction({
-    name: userName.value,
-    tags: tags.value,
+    name: searchCondition.value.customerNameOrigin,
+    tags: searchCondition.value.tagsOrigin,
     page: page - 1,
     sortBy: `${sortBy[0]?.key || CONSTANT.CUSTOMER_ID_KEY}:${sortBy[0]?.order || CONSTANT.ORDER}`,
     limit: itemsPerPage
@@ -52,22 +56,24 @@ const loadItems = async (params: TableConfig) => {
   //If has error then show error message
   if (hasError.value) {
     showErrorMsg(t(LOCALE_KEY.MESSAGE_ERROR))
-  }
+  } else {
+    //Get pagging text under table
+    pageText.value = getPageText(
+      itemsPerPage,
+      options.value.page,
+      totalElements.value,
+      t(LOCALE_KEY.PAGE_TEXT)
+    )
 
-  //Get pagging text under table
-  pageText.value = getPageText(
-    itemsPerPage,
-    options.value.page,
-    totalElements.value,
-    t(LOCALE_KEY.PAGE_TEXT)
-  )
+    //Scroll to top table
+    goToTopTable()
+  }
 }
 
 /**
  * Show confirm dialog when remove customer item
  */
 const onRemoveItem = async (item: Customer | unknown) => {
-  console.log(item)
   let msg = t(LOCALE_KEY.REMOVE_MULTIPLE_ITEMS_CONFIRM_MSG)
 
   if (item) {
@@ -109,18 +115,24 @@ const onAgree = async () => {
  * Remove search condition
  */
 const onClearSearchCondition = () => {
-  userName.value = ''
-  tags.value = ''
+  searchCondition.value.customerName = ''
+  searchCondition.value.tags = ''
 }
 
 /**
  * Search customer
  */
 const onSearch = () => {
+  //save search condition
+  searchCondition.value.customerNameOrigin = searchCondition.value.customerName
+  searchCondition.value.tagsOrigin = searchCondition.value.tags
+  //Load data
+  const sortBy = options.value.sortBy
+
   loadItems({
     page: 1,
     itemsPerPage: itemsPerPage.value,
-    sortBy: [{ key: CONSTANT.CUSTOMER_ID_KEY, order: CONSTANT.ORDER }]
+    sortBy: [{ key: sortBy?.key, order: sortBy?.order }]
   })
 }
 
@@ -161,6 +173,17 @@ const onReloadTable = async () => {
     })
   }
 }
+
+/**
+ * Scroll to top table
+ */
+const goToTopTable = () => {
+  const table = document.querySelector(CONSTANT.TABLE_SELECTOR)
+
+  if (!table) return
+
+  table.scrollIntoView(true)
+}
 </script>
 
 <template>
@@ -169,38 +192,18 @@ const onReloadTable = async () => {
       <v-icon>mdi-account-search</v-icon>
       <span>{{ $t(LOCALE_KEY.FIND_USER_LABEL) }}</span>
     </v-label>
-    <v-row>
-      <v-col cols="12" sm="5">
-        <TextField v-model:value="userName" :label="$t(LOCALE_KEY.USER_NAME_LABEL)" hide-details />
-      </v-col>
-      <v-col cols="12" sm="5">
-        <TextField
-          v-model:value="tags"
-          :label="$t(LOCALE_KEY.TAGS)"
-          :hint="$t(LOCALE_KEY.NOTICE_TAGS)"
-        />
-      </v-col>
-      <v-col cols="12" sm="2" class="d-flex">
-        <Button icon="mdi-magnify" size="small" classProp="blue-bg text-white" @on-click="onSearch">
-          <v-icon>mdi-magnify</v-icon>
-        </Button>
-        <Button
-          icon="mdi-close"
-          size="small"
-          classProp="grey-bg text-white ml-1"
-          @on-click="onClearSearchCondition"
-        >
-          <v-icon>mdi-close</v-icon>
-        </Button>
-      </v-col>
-    </v-row>
+    <SearchForm
+      v-model:customer-name="searchCondition.customerName"
+      v-model:tags="searchCondition.tags"
+      @on-search="onSearch"
+      @on-clear="onClearSearchCondition"
+    />
     <div class="my-6">
       <div cols="12" sm="12" class="d-flex align-center">
-        <Button classProp="blue-bg text-white text-capitalize" @on-click="onOpenAddDialog">
+        <Button classProp="text-white text-capitalize" @on-click="onOpenAddDialog">
           <v-icon color="white" size="small">mdi-plus-circle</v-icon>
           <span class="ml-1">{{ $t(LOCALE_KEY.ADD_BTN) }}</span>
         </Button>
-
         <Button
           :disabled="!selectedRemoveItems.length"
           classProp="red-bg text-white text-capitalize ml-2"
@@ -220,7 +223,7 @@ const onReloadTable = async () => {
       :item-key="CONSTANT.CUSTOMER_ID_KEY"
       @update:options="loadItems"
       show-select
-      :headers="getHeaders(t)"
+      :headers="headers"
       :items="userList"
       :items-length="totalElements"
       :loading="isLoading"
@@ -232,12 +235,12 @@ const onReloadTable = async () => {
       :page="options.page"
     >
       <template v-slot:item.tags="{ value }">
-        <v-tooltip v-if="value" :text="value.toString()">
+        <v-tooltip v-if="value" :text="value">
           <template v-slot:activator="{ props }">
             <div v-bind="props">
               <Chip
-                v-if="value[0]"
-                :value="value[0]"
+                v-if="value"
+                :value="value"
                 :numberChip="CONSTANT.NUMBER_CHIP"
                 :lengthItemChip="CONSTANT.CHIP_LENGTH"
               />
@@ -253,7 +256,7 @@ const onReloadTable = async () => {
       </template>
     </v-data-table-server>
     <ConfirmDialog ref="refConfirmDialog" @on-agree="onAgree" />
-    <Loading :active="isLoading" />
+    <Loading :active="isLoading" :z-index="999999" />
     <UserModel ref="refUserModel" @on-reload-table="onReloadTable" />
   </v-container>
 </template>
@@ -264,28 +267,12 @@ const onReloadTable = async () => {
   margin-top: 50px;
 }
 
-.blue-bg {
-  background-color: rgb(24, 103, 192) !important;
-}
-
-.red-bg {
-  background-color: #eb3939 !important;
-}
-
-.grey-bg {
-  background-color: #6b6060 !important;
-}
-
-.text-white {
-  color: #fff !important;
-}
-
 .v-label {
   opacity: 1;
   font-size: 25px;
 }
 
-.v-btn--disabled {
+.red-bg {
   background-color: #eb3939 !important;
 }
 

@@ -10,7 +10,7 @@ import { formatDataArray, validateResponse, formatData } from '@/utils'
 import { ref } from 'vue'
 
 export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, () => {
-  const userList = ref<CustomerLst>([])
+  const userList = ref<CustomerList>([])
   const totalElements = ref<number>(0)
   const hasError = ref<boolean>(false)
   const isLoading = ref<boolean>(false)
@@ -18,7 +18,7 @@ export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, ()
   /**
    * Handle get customers list action
    */
-  const getCustomersAction = async (params: ParamsGet) => {
+  const getCustomersAction = async (params: CustomerGet) => {
     try {
       //Clear error status
       hasError.value = false
@@ -48,16 +48,11 @@ export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, ()
   /**
    * Handle add customers list action
    */
-  const addCustomerAction = async (body: BodyAdd) => {
+  const addCustomerAction = async (body: CustomerAdd) => {
     try {
       //Clear error status
       hasError.value = false
       isLoading.value = true
-
-      //Format body data
-      body.forEach((item: any) => {
-        item = formatData(item)
-      })
 
       //Call api add customers list
       const response = await addCustomers(body)
@@ -76,16 +71,11 @@ export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, ()
   /**
    * Handle update user action
    */
-  const updateCustomerAction = async (body: BodyUpdate) => {
+  const updateCustomerAction = async (body: CustomerAdd) => {
     try {
       //Clear error status
       hasError.value = false
       isLoading.value = true
-
-      //Format body data
-      body.forEach((item: any) => {
-        item = formatData(item)
-      })
 
       //Call api updates customer
       const response = await updateCustomer(body)
@@ -95,13 +85,13 @@ export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, ()
 
       //Update customer_name,tags in local list
       const index = userList.value.findIndex(
-        (item: any) => item.customer_id === body[0].customer_id
+        (item: Customer) => item.customer_id === body[0].customer_id
       )
 
       userList.value[index] = {
         ...userList.value[index],
-        customer_name: body[0].customer_name,
-        tags: [body[0].tags?.toString()]
+        customer_name: body[0]?.customer_name,
+        tags: body[0].tags?.toString()
       }
     } catch (error) {
       console.error(error)
@@ -115,7 +105,7 @@ export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, ()
   /**
    * Handle remove customer action
    */
-  const removeCustomerAction = async (params: ParamsRemove) => {
+  const removeCustomerAction = async (params: IDRemove) => {
     try {
       //Clear error status
       hasError.value = false

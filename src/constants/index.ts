@@ -51,11 +51,13 @@ export const CONSTANT = {
     { value: 50, title: '50' }
   ],
   CUSTOMER_ID_KEY: 'customer_id',
-  ORDER: 'ASC',
+  ORDER: 'asc',
   CUSTOMER_NAME_LENGTH: 20,
   CHIP_LENGTH: 10,
   NUMBER_CHIP: 3,
   APPLICATION_JSON: 'application/json',
   CONTENT_TYPE: 'Content-Type',
-  DATE_FORMAT: 'YYYY/MM/DD hh:mm'
+  DATE_FORMAT: 'YYYY/MM/DD hh:mm',
+  TABLE_SELECTOR: 'table',
+  SYSTEM_ERROR_MSG: 'System Error'
 }

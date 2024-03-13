@@ -16,7 +16,7 @@ export default {
   [LOCALE_KEY.USER_NAME_LABEL]: '顧客名',
   [LOCALE_KEY.TAGS]: 'タグ',
   [LOCALE_KEY.SAVE_BTN]: '保存する',
-  [LOCALE_KEY.USER_NAME_TOO_LONG_ERROR_MSG]: '20文字以下の顧客名を入力してください',
+  [LOCALE_KEY.USER_NAME_TOO_LONG_ERROR_MSG]: '20文字以内の顧客名を入力してください',
   [LOCALE_KEY.MESSAGE_UPDATE_SUCCESS]: '登録が完了しました。',
   [LOCALE_KEY.TITLE_EDIT_CUSTOMER_MODAL]: '顧客情報編集',
   [LOCALE_KEY.UPDATE_DATA_CONFIRM_MSG]: '登録処理を実行してよろしいですか？',

@@ -2,7 +2,7 @@
 type Props = {
   classProp?: string
   color?: string
-  variant?: string
+  variant?: string | any
   size?: string
 }
 
@@ -12,13 +12,11 @@ type Emits = {
 
 const emit = defineEmits<Emits>()
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   variant: 'elevated',
   classProp: 'font-weight-bold text-body-2',
   color: 'primary'
 })
-
-const { variant, color, classProp, size } = props
 
 /**
  * Handle click to button event

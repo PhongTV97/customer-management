@@ -95,10 +95,11 @@ export const getHeaders = (t: any) => {
 /**
  * Format created_at, updated_at to YYYY/MM/DD hh:mm
  */
-export const formatDataArray = (arr: CustomerLst) => {
+export const formatDataArray = (arr: CustomerList) => {
   return arr.map((ele: Customer) => {
     return {
       ...ele,
+      tags: ele.tags?.toString(),
       created_at: moment(ele.created_at).format(CONSTANT.DATE_FORMAT),
       updated_at: moment(ele.updated_at).format(CONSTANT.DATE_FORMAT)
     }
@@ -118,7 +119,7 @@ export const validateResponse = (response: any) => {
  * Format tags from string to arrays type
  */
 export const formatData = (body: any) => {
-  body.tags = !body.tags ? [] : body.tags.split(',')
+  body.tags = !body.tags ? [''] : body.tags.split(',')
 
   return body
 }
