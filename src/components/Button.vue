@@ -21,15 +21,15 @@ const props = withDefaults(defineProps<Props>(), {
 const { variant, color, classProp, size } = props
 
 /**
- * Handle click action to button
+ * Handle click to button event
  */
-function onHandleClick() {
+const onHandleClick = () => {
   emit('onClick')
 }
 </script>
 
 <template>
-  <v-btn @click="onHandleClick()" :class="classProp" :color="color" :variant="variant" :size="size">
+  <v-btn @click="onHandleClick" :class="classProp" :color="color" :variant="variant" :size="size">
     <slot />
   </v-btn>
 </template>

@@ -10,18 +10,24 @@ import { formatDataArray, validateResponse, formatData } from '@/utils'
 import { ref } from 'vue'
 
 export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, () => {
-  const userList = ref<any>([])
-  const totalElements = ref<any>(0)
-  const hasError = ref<any>(false)
-  const isLoading = ref<any>(false)
+  const userList = ref<CustomerLst>([])
+  const totalElements = ref<number>(0)
+  const hasError = ref<boolean>(false)
+  const isLoading = ref<boolean>(false)
 
-  const getCustomersAction = async (params: any) => {
+  /**
+   * Handle get customers list action
+   */
+  const getCustomersAction = async (params: ParamsGet) => {
     try {
+      //Clear error status
       hasError.value = false
       isLoading.value = true
 
+      //Call api get customers list
       const response = await getCustomers(formatData(params))
 
+      //Check response status
       if (response.status === CONSTANT.STATUS_CODE_SUCCESS) {
         const resData = response.data
 
@@ -32,45 +38,62 @@ export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, ()
       }
     } catch (error) {
       console.error(error)
+      //If has error set state
       hasError.value = true
     } finally {
       isLoading.value = false
     }
   }
 
-  const addCustomerAction = async (body: any) => {
+  /**
+   * Handle add customers list action
+   */
+  const addCustomerAction = async (body: BodyAdd) => {
     try {
+      //Clear error status
       hasError.value = false
       isLoading.value = true
 
+      //Format body data
       body.forEach((item: any) => {
         item = formatData(item)
       })
 
+      //Call api add customers list
       const response = await addCustomers(body)
 
+      //Check response status
       validateResponse(response)
     } catch (error) {
       console.error(error)
+      //If has error set state
       hasError.value = true
     } finally {
       isLoading.value = false
     }
   }
 
-  const updateCustomerAction = async (body: any) => {
+  /**
+   * Handle update user action
+   */
+  const updateCustomerAction = async (body: BodyUpdate) => {
     try {
+      //Clear error status
       hasError.value = false
       isLoading.value = true
 
+      //Format body data
       body.forEach((item: any) => {
         item = formatData(item)
       })
 
+      //Call api updates customer
       const response = await updateCustomer(body)
 
+      //Check response status
       validateResponse(response)
 
+      //Update customer_name,tags in local list
       const index = userList.value.findIndex(
         (item: any) => item.customer_id === body[0].customer_id
       )
@@ -82,22 +105,30 @@ export const useCustomerStore = defineStore(CONSTANT.STORE_ID_GET_LIST_USERS, ()
       }
     } catch (error) {
       console.error(error)
+      //If has error set state
       hasError.value = true
     } finally {
       isLoading.value = false
     }
   }
 
-  const removeCustomerAction = async (params: any) => {
+  /**
+   * Handle remove customer action
+   */
+  const removeCustomerAction = async (params: ParamsRemove) => {
     try {
+      //Clear error status
       hasError.value = false
       isLoading.value = true
 
+      //Call api remove customer
       const response = await removeCustomer(params)
 
+      //Check response status
       validateResponse(response)
     } catch (error) {
       console.error(error)
+      //If has error set state
       hasError.value = true
     } finally {
       isLoading.value = false

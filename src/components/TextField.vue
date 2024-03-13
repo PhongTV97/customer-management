@@ -18,7 +18,7 @@ const valueModel = defineModel('value')
 /**
  * Checks if a value is provided when required and returns an error message if not.
  */
-function requiredFunc(value: string | null): boolean | string {
+const requiredFunc = (value: string | null): boolean | string => {
   const valid = !props.required || value
 
   return valid ? true : t(LOCALE_KEY.USER_NAME_TOO_LONG_ERROR_MSG)
@@ -29,7 +29,7 @@ function requiredFunc(value: string | null): boolean | string {
  * @param {string} value
  * @returns {boolean|string} Returns true if the length of the value is valid,otherwise returns a error message
  */
-function counterLength(value: string | null): boolean | string {
+const counterLength = (value: string | null): boolean | string => {
   const isValid = !props.counter || !value || value.length <= CONSTANT.CUSTOMER_NAME_LENGTH
 
   return isValid ? true : t(LOCALE_KEY.USER_NAME_TOO_LONG_ERROR_MSG)
@@ -38,7 +38,7 @@ function counterLength(value: string | null): boolean | string {
 /**
  * Handle clear value of textfield
  */
-function onClearTextField() {
+const onClearTextField = () => {
   valueModel.value = ''
 }
 </script>

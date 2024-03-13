@@ -1,6 +1,9 @@
 import { CONSTANT } from '@/constants'
 import axios from 'axios'
 
+/**
+ * Config axios request information
+ */
 const request = axios.create({
   baseURL: process.env.VITE_APP_API_URL,
   headers: {

@@ -33,3 +33,19 @@ type ItemUpdate = {
 }
 
 type BodyUpdate = ItemUpdate[]
+
+type SortBy = {
+  key: string
+  order: string
+}
+
+type OptionTable = {
+  page: number
+  sortBy: SortBy
+}
+
+type TableConfig = {
+  page: number
+  itemsPerPage: number
+  sortBy: SortBy[]
+}

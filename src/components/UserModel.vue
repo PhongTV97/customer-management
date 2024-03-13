@@ -25,14 +25,14 @@ type Emits = {
 }
 const emit = defineEmits<Emits>()
 
-function onCancel() {
+const onCancel = () => {
   visiableModal.value = false
 }
 
 /**
  * Handle the open modal, sets data into the corresponding fields
  */
-function onOpen(item: Customer) {
+const onOpen = (item: Customer) => {
   // set data to form edit
   if (item) {
     arrayItems.value = [{}]
@@ -53,7 +53,7 @@ function onOpen(item: Customer) {
 /**
  * Check and disable the save button
  */
-function disabledBtnSave() {
+const disabledBtnSave = () => {
   if (isEditForm.value) {
     const isNotChange =
       arrayItems.value[0].customer_name === arrayItemsClone.value[0].customer_name &&
@@ -75,7 +75,7 @@ function disabledBtnSave() {
 /**
  * Open dialog confirm
  */
-async function onSave() {
+const onSave = async () => {
   await form.value.validate()
 
   if (!valid.value) return
@@ -89,7 +89,7 @@ async function onSave() {
 /**
  * Handle the Ok button click event on the confirmation dialog
  */
-async function onAgree() {
+const onAgree = async () => {
   if (isEditForm.value) {
     //Call api update data
     await updateCustomerAction(arrayItems.value)
@@ -116,14 +116,14 @@ async function onAgree() {
 /**
  * Add item to form
  */
-function onAddItem() {
+const onAddItem = () => {
   arrayItems.value.push({ customer_name: '', tags: '' })
 }
 
 /**
  * Remove item in form
  */
-function onRemoveItem(index: number) {
+const onRemoveItem = (index: number) => {
   if (arrayItems.value.length === 1) return
 
   arrayItems.value.splice(index, 1)
@@ -132,7 +132,7 @@ function onRemoveItem(index: number) {
 /**
  * Check required
  */
-function checkRequired(item: any): boolean {
+const checkRequired = (item: any): boolean => {
   return !(!isEditForm.value && !item.tags)
 }
 

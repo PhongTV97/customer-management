@@ -15,7 +15,7 @@ const title = ref<string>('')
 /**
  * Open an dialog and display the corresponding title and message
  */
-function onOpen(tle: string, msg: string) {
+const onOpen = (tle: string, msg: string) => {
   dialog.value = true
   title.value = tle
   message.value = msg
@@ -24,7 +24,7 @@ function onOpen(tle: string, msg: string) {
 /**
  * Handle the event when clicking the OK button and closing the confirm dialog
  */
-function onAgree() {
+const onAgree = () => {
   dialog.value = false
   emit('onAgree')
 }
@@ -32,7 +32,7 @@ function onAgree() {
 /**
  * Close the dialog box when pressing the cancel button
  */
-function cancel() {
+const cancel = () => {
   dialog.value = false
 }
 
@@ -42,7 +42,7 @@ defineExpose({
 </script>
 
 <template>
-  <v-dialog v-model="dialog" :max-width="400" :style="{ zIndex: 9999 }" @keydown.esc="cancel()">
+  <v-dialog v-model="dialog" :max-width="400" :style="{ zIndex: 9999 }" @keydown.esc="cancel">
     <v-card>
       <v-card-title dense flat class="title-grey-bg">
         {{ title }}

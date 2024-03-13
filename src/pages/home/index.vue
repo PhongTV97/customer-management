@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useCustomerStore } from '@/stores/customers'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { storeToRefs } from 'pinia'
@@ -17,21 +17,30 @@ const { t } = useI18n()
 const useStore = useCustomerStore()
 const { userList, totalElements, hasError, isLoading } = storeToRefs(useStore)
 const { getCustomersAction, removeCustomerAction } = useStore
-const itemSelected = ref([])
-const isRemoveMul = ref(false)
-const itemsPerPage = ref(15)
-const selectedItems = ref([])
-const refConfirmDialog = ref(null)
-const refUserModel = ref(null)
-const options = ref({ page: 1 })
-const userName = ref('')
-const tags = ref('')
-const pageText = ref('')
+const itemSelected = ref<Customer | any>()
+const isRemoveMul = ref<boolean>(false)
+const itemsPerPage = ref<number>(15)
+const selectedRemoveItems = ref<number[]>([])
+const refConfirmDialog = ref<any>(null)
+const refUserModel = ref<any>(null)
+const options = ref<OptionTable>({
+  page: 1,
+  sortBy: { key: CONSTANT.CUSTOMER_ID_KEY, order: CONSTANT.ORDER }
+})
+const userName = ref<string>('')
+const tags = ref<string>('')
+const pageText = ref<string>('')
 
-async function loadItems({ page, itemsPerPage, sortBy }) {
+/**
+ * Load data to table
+ */
+const loadItems = async (params: TableConfig) => {
+  const { page, itemsPerPage, sortBy } = params
+  //Save table state
   options.value.page = page
   options.value.sortBy = sortBy[0]
 
+  //Call api get customers list
   await getCustomersAction({
     name: userName.value,
     tags: tags.value,
@@ -40,10 +49,12 @@ async function loadItems({ page, itemsPerPage, sortBy }) {
     limit: itemsPerPage
   })
 
+  //If has error then show error message
   if (hasError.value) {
     showErrorMsg(t(LOCALE_KEY.MESSAGE_ERROR))
   }
 
+  //Get pagging text under table
   pageText.value = getPageText(
     itemsPerPage,
     options.value.page,
@@ -52,7 +63,11 @@ async function loadItems({ page, itemsPerPage, sortBy }) {
   )
 }
 
-async function onRemoveItem(item) {
+/**
+ * Show confirm dialog when remove customer item
+ */
+const onRemoveItem = async (item: Customer | unknown) => {
+  console.log(item)
   let msg = t(LOCALE_KEY.REMOVE_MULTIPLE_ITEMS_CONFIRM_MSG)
 
   if (item) {
@@ -63,31 +78,45 @@ async function onRemoveItem(item) {
     isRemoveMul.value = true
   }
 
+  //Show confirm dialog
   await refConfirmDialog.value.onOpen(t(LOCALE_KEY.TITLE_DIALOG_CONFIRM), msg)
 }
 
-async function onAgree() {
+/**
+ * Remove customer
+ */
+const onAgree = async () => {
+  //Call api remove customer
   await removeCustomerAction(
-    !isRemoveMul.value ? [itemSelected.value.customer_id] : selectedItems.value
+    !isRemoveMul.value ? [itemSelected.value?.customer_id] : selectedRemoveItems.value
   )
 
+  //If has error then show error message else show success message
   if (hasError.value) {
     showErrorMsg(t(LOCALE_KEY.MESSAGE_ERROR))
   } else {
     showSuccessMsg(t(LOCALE_KEY.REMOVE_ITEM_SUCCESS_MSG))
 
-    if (isRemoveMul.value) selectedItems.value = []
+    //Reset remove ids list
+    if (isRemoveMul.value) selectedRemoveItems.value = []
 
+    //Load data page 1
     onReloadTable()
   }
 }
 
-function onClearSearchCondition() {
+/**
+ * Remove search condition
+ */
+const onClearSearchCondition = () => {
   userName.value = ''
   tags.value = ''
 }
 
-function onSearch() {
+/**
+ * Search customer
+ */
+const onSearch = () => {
   loadItems({
     page: 1,
     itemsPerPage: itemsPerPage.value,
@@ -95,21 +124,30 @@ function onSearch() {
   })
 }
 
-async function onUpdateItem(item) {
+/**
+ * Open modal dialog update customer
+ */
+const onUpdateItem = async (item: Customer | unknown) => {
   await refUserModel.value.onOpen(item)
 }
 
-async function onOpenAddDialog() {
+/**
+ * Open modal dialog add customers
+ */
+const onOpenAddDialog = async () => {
   await refUserModel.value.onOpen()
 }
 
-async function onReloadTable() {
+/**
+ * Reload data table
+ */
+const onReloadTable = async () => {
   if (options.value.page !== 1) {
     options.value.page = 1
   } else {
     let sortBy = options.value.sortBy
 
-    sortBy = [
+    const sortByParam = [
       {
         key: !sortBy ? CONSTANT.CUSTOMER_ID_KEY : sortBy.key,
         order: !sortBy ? CONSTANT.ORDER : sortBy.order
@@ -119,7 +157,7 @@ async function onReloadTable() {
     await loadItems({
       page: 1,
       itemsPerPage: itemsPerPage.value,
-      sortBy
+      sortBy: sortByParam
     })
   }
 }
@@ -164,7 +202,7 @@ async function onReloadTable() {
         </Button>
 
         <Button
-          :disabled="!selectedItems.length"
+          :disabled="!selectedRemoveItems.length"
           classProp="red-bg text-white text-capitalize ml-2"
           @on-click="onRemoveItem"
         >
@@ -174,7 +212,7 @@ async function onReloadTable() {
       </div>
     </div>
     <v-data-table-server
-      v-model="selectedItems"
+      v-model="selectedRemoveItems"
       fixed-header
       height="600"
       v-model:items-per-page="itemsPerPage"

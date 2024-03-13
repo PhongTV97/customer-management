@@ -6,14 +6,23 @@ const toaster = createToaster({
 })
 import moment from 'moment'
 
+/**
+ * Show error message toast
+ */
 export const showErrorMsg = (msg: string) => {
   toaster.error(msg)
 }
 
+/**
+ * Show success message toast
+ */
 export const showSuccessMsg = (msg: string) => {
   toaster.success(msg)
 }
 
+/**
+ * Get page text under table pagging
+ */
 export const getPageText = (
   itemsPerPage: number,
   page: number,
@@ -30,6 +39,9 @@ export const getPageText = (
   )
 }
 
+/**
+ * Create headers to table
+ */
 export const getHeaders = (t: any) => {
   return [
     {
@@ -80,8 +92,10 @@ export const getHeaders = (t: any) => {
   ]
 }
 
+/**
+ * Format created_at, updated_at to YYYY/MM/DD hh:mm
+ */
 export const formatDataArray = (arr: CustomerLst) => {
-  console.log(arr)
   return arr.map((ele: Customer) => {
     return {
       ...ele,
@@ -91,15 +105,19 @@ export const formatDataArray = (arr: CustomerLst) => {
   })
 }
 
+/**
+ * Check response status if status different 200 throws error
+ */
 export const validateResponse = (response: any) => {
   if (response.status === CONSTANT.STATUS_CODE_SUCCESS) return
 
   throw new Error(CONSTANT.SYSTEM_ERROR_MSG)
 }
 
+/**
+ * Format tags from string to arrays type
+ */
 export const formatData = (body: any) => {
-  console.log(body)
-
   body.tags = !body.tags ? [] : body.tags.split(',')
 
   return body
