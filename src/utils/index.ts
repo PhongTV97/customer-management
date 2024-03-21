@@ -29,6 +29,8 @@ export const getPageText = (
   totalElements: number,
   text: string
 ) => {
+  if (!totalElements) return ''
+
   return (
     (page === 1 ? 1 : 1 + (page - 1) * itemsPerPage) +
     '-' +
