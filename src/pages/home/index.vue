@@ -305,4 +305,12 @@ const goToTopTable = () => {
 :deep(.v-table.v-table--fixed-header > .v-table__wrapper > table > thead > tr > th) {
   border-right: thin solid #ccccccb8;
 }
+
+:deep(.v-data-table-footer__info) {
+  min-width: unset;
+}
+
+:deep(.v-data-table-footer__pagination) {
+  margin: 0;
+}
 </style>

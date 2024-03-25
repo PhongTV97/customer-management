@@ -57,7 +57,7 @@ export const CONSTANT = {
   NUMBER_CHIP: 3,
   APPLICATION_JSON: 'application/json',
   CONTENT_TYPE: 'Content-Type',
-  DATE_FORMAT: 'YYYY/MM/DD hh:mm',
+  DATE_FORMAT: 'YYYY/MM/DD hh:mm A',
   TABLE_SELECTOR: 'table',
   SYSTEM_ERROR_MSG: 'System Error'
 }
