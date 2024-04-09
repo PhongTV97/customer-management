@@ -7,6 +7,11 @@ import HomePage from '@/pages/home/index.vue'
  */
 const routes = [
   {
+    path: ROUTER_PATH.ROOT,
+    name: ROUTER_NAME.ROOT,
+    component: HomePage
+  },
+  {
     path: ROUTER_PATH.HOME,
     name: ROUTER_NAME.HOME,
     component: HomePage

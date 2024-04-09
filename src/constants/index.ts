@@ -1,8 +1,10 @@
 export const ROUTER_PATH = {
+  ROOT: '/',
   HOME: '/home'
 }
 
 export const ROUTER_NAME = {
+  ROOT: 'root',
   HOME: 'home'
 }
 
