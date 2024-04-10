@@ -1,4 +1,9 @@
 <script setup lang="ts">
+/**
+ * @author : PhongTV
+ * @since : 3/6/2024, Wed
+ */
+
 import { LOCALE_KEY } from '@/constants'
 import TextField from './TextField.vue'
 import Button from './Button.vue'

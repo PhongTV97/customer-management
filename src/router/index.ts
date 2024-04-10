@@ -1,3 +1,8 @@
+/**
+ * @author : PhongTV
+ * @since : 3/6/2024, Wed
+ */
+
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { ROUTER_NAME, ROUTER_PATH } from '@/constants'
 import HomePage from '@/pages/home/index.vue'

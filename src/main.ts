@@ -1,3 +1,8 @@
+/**
+ * @author : PhongTV
+ * @since : 3/5/2024, Tue
+ */
+
 import '@/assets/main.css'
 import i18n from '@/locales'
 import { createApp } from 'vue'

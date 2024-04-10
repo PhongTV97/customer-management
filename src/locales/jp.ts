@@ -1,3 +1,8 @@
+/**
+ * @author : PhongTV
+ * @since : 3/6/2024, Wed
+ */
+
 import { LOCALE_KEY } from '@/constants'
 
 export default {

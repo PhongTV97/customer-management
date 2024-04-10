@@ -1,3 +1,8 @@
+/**
+ * @author : PhongTV
+ * @since : 3/5/2024, Tue
+ */
+
 type Customer = {
   customer_id: number
   customer_name: string

@@ -1,4 +1,9 @@
 <script setup lang="ts">
+/**
+ * @author : PhongTV
+ * @since : 3/6/2024, Wed
+ */
+
 import { CONSTANT, LOCALE_KEY } from '@/constants'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'

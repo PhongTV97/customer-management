@@ -1,4 +1,9 @@
 <script setup lang="ts">
+/**
+ * @author : PhongTV
+ * @since : 3/6/2024, Wed
+ */
+
 type Props = {
   value: string
   numberChip: number

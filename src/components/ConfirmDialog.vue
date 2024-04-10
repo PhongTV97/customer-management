@@ -1,4 +1,9 @@
 <script setup lang="ts">
+/**
+ * @author : PhongTV
+ * @since : 3/7/2024, Thu
+ */
+
 import { ref } from 'vue'
 import { LOCALE_KEY } from '@/constants'
 import Button from './Button.vue'

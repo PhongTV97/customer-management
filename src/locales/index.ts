@@ -1,3 +1,8 @@
+/**
+ * @author : PhongTV
+ * @since : 3/6/2024, Wed
+ */
+
 import { createI18n } from 'vue-i18n'
 import jp from './jp.js'
 

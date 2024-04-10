@@ -1,4 +1,9 @@
 <script setup lang="ts">
+/**
+ * @author : PhongTV
+ * @since : 3/6/2024, Wed
+ */
+
 import { useCustomerStore } from '@/stores/customers'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { storeToRefs } from 'pinia'
